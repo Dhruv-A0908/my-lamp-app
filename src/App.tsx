@@ -296,7 +296,6 @@ const SUBJECT_TOPICS: Record<string, { title: string; desc: string; formula: str
 };
 
 export default function App() {
-  // Auth States
   const [isSignUp, setIsSignUp] = useState(false);
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
@@ -304,7 +303,6 @@ export default function App() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  // OTP
   const [otpSent, setOtpSent] = useState(false);
   const [otpValues, setOtpValues] = useState(['', '', '', '']);
   const [generatedOtp, setGeneratedOtp] = useState('');
@@ -316,12 +314,10 @@ export default function App() {
     useRef<HTMLInputElement>(null)
   ];
 
-  // 3D Notebook Loading States
   const [isWarping, setIsWarping] = useState(false);
   const [warpProgress, setWarpProgress] = useState(0);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // Lamp Physics
   const [lampOn, setLampOn] = useState(true);
   const [lampAngle, setLampAngle] = useState(0);
   const [isPulling, setIsPulling] = useState(false);
@@ -329,23 +325,19 @@ export default function App() {
   const startYRef = useRef(0);
   const hasTriggeredRef = useRef(false);
 
-  // Navigation & Subject Selection
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'study' | 'test' | 'scores' | 'friends' | 'profile'>('study');
   const [readingTopic, setReadingTopic] = useState<{ title: string; desc: string; formula: string; tips: string } | null>(null);
 
-  // USER PROFILE, PIC & PRIVACY STATES
   const [myUsername, setMyUsername] = useState('@saksham_sharma');
   const [isEditingUsername, setIsEditingUsername] = useState(false);
   const [newUsernameInput, setNewUsernameInput] = useState('');
   const [profilePicUrl, setProfilePicUrl] = useState<string | null>(null);
   const [showProgressPublicly, setShowProgressPublicly] = useState(true);
 
-  // Friends & Chat States
   const [searchIdInput, setSearchIdInput] = useState('');
   const [searchMessage, setSearchMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
   const [friendsList, setFriendsList] = useState<Friend[]>([]);
-  // @ts-ignore
   const [shareNoteModal, setShareNoteModal] = useState<{ isOpen: boolean; topicTitle: string; friendName: string } | null>(null); 
   const [activeChatFriend, setActiveChatFriend] = useState<Friend | null>(null);
   const [chatMessages, setChatMessages] = useState<Record<string, ChatMessage[]>>({});
@@ -354,7 +346,6 @@ export default function App() {
   const [isVideoMuted, setIsVideoMuted] = useState(false);
   const [isAudioMuted, setIsAudioMuted] = useState(false);
 
-  // Exam CBT Engine States (Max Marks: 30)
   const [isExamActive, setIsExamActive] = useState(false);
   const [examSubject, setExamSubject] = useState<string>('Physics');
   const [currentQIndex, setCurrentQIndex] = useState(0);
@@ -363,7 +354,6 @@ export default function App() {
   const [examCompleted, setExamCompleted] = useState(false);
   const [examResult, setExamResult] = useState<{ score: number; maxMarks: number; percentage: number; correctCount: number } | null>(null);
 
-  // Score History
   const [scoreHistory, setScoreHistory] = useState<TestRecord[]>([
     {
       id: 'REC-101',
@@ -375,7 +365,6 @@ export default function App() {
     }
   ]);
 
-  // Friend AI States
   const [isAiOpen, setIsAiOpen] = useState(false);
   const [aiInput, setAiInput] = useState('');
   const [aiMessages, setAiMessages] = useState<Array<{ sender: 'user' | 'ai'; text: string; image?: string }>>([
@@ -384,7 +373,6 @@ export default function App() {
   const [uploadedPhotosToday, setUploadedPhotosToday] = useState(10);
   const [isPremiumUser, setIsPremiumUser] = useState(false);
   
-  // Payment Modal States
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [paymentStep, setPaymentStep] = useState<'checkout' | 'verify'>('checkout');
   const [utrInput, setUtrInput] = useState('');
@@ -401,7 +389,6 @@ export default function App() {
   const [shareToast, setShareToast] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // Particle Canvas
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -475,7 +462,6 @@ export default function App() {
     };
   }, []);
 
-  // Exam Timer
   useEffect(() => {
     let timer: any;
     if (isExamActive && !examCompleted && timeLeft > 0) {
@@ -536,11 +522,9 @@ export default function App() {
     }
   };
 
-  // VALIDATION FOR MANDATORY UNDERSCORE OR DOT IN USERNAME
   const validateUsername = (u: string) => {
     let clean = u.trim();
     if (!clean.startsWith('@')) clean = '@' + clean;
-    // Check if contains underscore '_' or dot '.'
     const hasUnderscoreOrDot = clean.includes('_') || clean.includes('.');
     return { isValid: hasUnderscoreOrDot, formatted: clean };
   };
@@ -579,64 +563,6 @@ export default function App() {
       alert('Please enter a valid 10-digit registered mobile number.');
       return;
     }
-    triggerTransition();
-  };
-
-  const handleSignUpInit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (phone.length !== 10) {
-      alert('Please enter a valid 10-digit mobile number.');
-      return;
-    }
-    if (!username.trim()) {
-      alert('Please choose a username.');
-      return;
-    }
-    const val = validateUsername(username);
-    if (!val.isValid) {
-      alert("Username must contain at least an underscore (_) or a dot (.) mandatory! (e.g. saksham_sharma or saksham.s)");
-      return;
-    }
-
-    const randomOtp = Math.floor(1000 + Math.random() * 9000).toString();
-    setGeneratedOtp(randomOtp);
-    setOtpSent(true);
-    setOtpError('');
-  };
-
-  const handleOtpChange = (index: number, val: string) => {
-    if (isNaN(Number(val))) return;
-    const newOtp = [...otpValues];
-    newOtp[index] = val.slice(-1);
-    setOtpValues(newOtp);
-
-    if (val && index < 3) {
-      otpInputRefs[index + 1].current?.focus();
-    }
-  };
-
-  const handleOtpKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Backspace' && !otpValues[index] && index > 0) {
-      otpInputRefs[index - 1].current?.focus();
-    }
-  };
-
-  const handleVerifyOtp = (e: React.FormEvent) => {
-    e.preventDefault();
-    const enteredCode = otpValues.join('');
-    if (enteredCode === generatedOtp) {
-      setOtpError('');
-      triggerTransition();
-    } else {
-      setOtpError('Invalid 4-digit code.');
-    }
-  };
-
-  const handleGuestLogin = () => {
-    setPhone('9876543210');
-    setName('Scholar_Guest');
-    setMyUsername('@guest_scholar');
-    setPassword('study_hub_pass');
     triggerTransition();
   };
 
@@ -680,7 +606,6 @@ export default function App() {
     }
   };
 
-  // Edit Username Handler with Mandatory Check
   const handleSaveUsername = () => {
     const val = validateUsername(newUsernameInput);
     if (!val.isValid) {
@@ -692,7 +617,6 @@ export default function App() {
     setNewUsernameInput('');
   };
 
-  // Profile Picture Upload Handler
   const handleProfilePicChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -701,7 +625,6 @@ export default function App() {
     e.target.value = '';
   };
 
-  // Friend Request Handler
   const handleSearchAndSendRequest = (e: React.FormEvent) => {
     e.preventDefault();
     let query = searchIdInput.trim();
@@ -762,7 +685,6 @@ export default function App() {
     }, 1000);
   };
 
-  // CBT Exam Logic
   const startExamForSubject = (subj: string) => {
     setExamSubject(subj);
     setIsExamActive(true);
@@ -827,7 +749,6 @@ export default function App() {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // Friend AI Chat & Image Upload
   const handleSendAiMessage = () => {
     if (!aiInput.trim()) return;
 
@@ -936,7 +857,6 @@ export default function App() {
       }}
     >
       <style>{`
-        /* Hide Netlify Badge */
         #netlify-badge, iframe[src*="netlify"] {
           display: none !important;
         }
@@ -975,7 +895,6 @@ export default function App() {
         .quiz-option:hover { border-color: #f59e0b !important; background-color: rgba(245, 158, 11, 0.08) !important; }
       `}</style>
 
-      {/* LIVE PARTICLE CANVAS */}
       <canvas
         ref={canvasRef}
         style={{
@@ -999,21 +918,9 @@ export default function App() {
         </div>
       )}
 
-      {otpSent && !isLoggedIn && (
-        <div style={{ position: 'fixed', top: '24px', zIndex: 999, backgroundColor: 'rgba(15, 23, 42, 0.95)', border: '1px solid #f59e0b', borderRadius: '12px', padding: '12px 20px', boxShadow: '0 10px 30px rgba(245, 158, 11, 0.3)', display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <KeyRound size={20} color="#f59e0b" />
-          <div style={{ fontSize: '13px' }}>
-            <span style={{ color: '#94a3b8' }}>Security 2FA Gateway: </span>
-            Verification code is <strong style={{ color: '#f59e0b', fontSize: '16px', letterSpacing: '2px' }}>{generatedOtp}</strong>
-          </div>
-        </div>
-      )}
-
-      {/* 3D NOTEBOOK OPENING LOADING SCREEN (~3.5 SECONDS) */}
       {isWarping && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 100, backgroundColor: 'rgba(2, 6, 23, 0.95)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', backdropFilter: 'blur(10px)' }}>
           <div className="notebook-container" style={{ width: '340px', height: '220px', backgroundColor: '#0f172a', border: '3px solid #f59e0b', borderLeft: '18px solid #d97706', borderRadius: '8px 16px 16px 8px', boxShadow: '0 25px 60px rgba(245, 158, 11, 0.35), inset 0 0 30px rgba(0,0,0,0.6)', padding: '24px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', position: 'relative' }}>
-            
             <div style={{ position: 'absolute', left: '-12px', top: '20px', bottom: '20px', width: '4px', display: 'flex', flexDirection: 'column', justifyContent: 'space-around' }}>
               <div style={{ width: '4px', height: '8px', backgroundColor: '#78350f', borderRadius: '2px' }} />
               <div style={{ width: '4px', height: '8px', backgroundColor: '#78350f', borderRadius: '2px' }} />
@@ -1047,13 +954,56 @@ export default function App() {
         </div>
       )}
 
-      {/* DASHBOARD VIEW */}
-      {isLoggedIn ? (
+      {!isLoggedIn ? (
+        <div style={{ width: '100%', maxWidth: '420px', padding: '30px', backgroundColor: 'rgba(15, 23, 42, 0.85)', border: '1px solid rgba(245, 158, 11, 0.3)', borderRadius: '20px', textAlign: 'center', zIndex: 10, backdropFilter: 'blur(12px)', boxShadow: '0 20px 50px rgba(0,0,0,0.6)' }}>
+          <div style={{ display: 'inline-flex', padding: '12px', borderRadius: '50%', backgroundColor: 'rgba(245, 158, 11, 0.1)', color: '#f59e0b', marginBottom: '16px', border: '1px solid rgba(245, 158, 11, 0.2)' }}>
+            <Compass size={32} />
+          </div>
+          <h1 style={{ margin: '0 0 8px 0', fontSize: '26px', fontWeight: 800, color: '#f8fafc' }}>NEXUS Portal</h1>
+          <p style={{ color: '#94a3b8', fontSize: '13px', margin: '0 0 24px 0', lineHeight: 1.5 }}>
+            Advanced Study Material & CBT Assessment Hub for Aspiring Scholars.
+          </p>
+
+          <form onSubmit={handleLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px', textAlign: 'left' }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 600, color: '#94a3b8', marginBottom: '6px' }}>
+                REGISTERED MOBILE NUMBER
+              </label>
+              <input
+                type="text"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
+                maxLength={10}
+                placeholder="e.g. 9876543210"
+                style={{ width: '100%', padding: '12px', borderRadius: '8px', backgroundColor: '#030712', border: '1px solid #334155', color: '#fff', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }}
+              />
+            </div>
+
+            <div>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 600, color: '#94a3b8', marginBottom: '6px' }}>
+                CHOOSE USERNAME (Mandatory _ or .)
+              </label>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value.replace(/[^a-zA-Z0-9_.]/g, ''))}
+                placeholder="e.g. saksham_sharma"
+                style={{ width: '100%', padding: '12px', borderRadius: '8px', backgroundColor: '#030712', border: '1px solid #334155', color: '#fff', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }}
+              />
+            </div>
+
+            <button
+              type="submit"
+              style={{ width: '100%', padding: '13px', borderRadius: '8px', border: 'none', backgroundColor: '#f59e0b', color: '#030712', fontSize: '14px', fontWeight: 800, cursor: 'pointer', marginTop: '6px', boxShadow: '0 4px 20px rgba(245, 158, 11, 0.35)' }}
+            >
+              Enter Study Portal
+            </button>
+          </form>
+        </div>
+      ) : (
         <div style={{ width: '100%', maxWidth: '1160px', padding: '24px 20px 80px 20px', position: 'relative', zIndex: 10 }}>
-          
           <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '18px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              {/* Profile Avatar in Header */}
               <div
                 onClick={() => setActiveTab('profile')}
                 style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#1e293b', border: '2px solid #f59e0b', overflow: 'hidden', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
@@ -1062,7 +1012,7 @@ export default function App() {
                 {profilePicUrl ? (
                   <img src={profilePicUrl} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : (
-                  <User size={20} color="#f59e0b" />
+                  <User color="#f59e0b" size={20} />
                 )}
               </div>
 
@@ -1105,7 +1055,6 @@ export default function App() {
             </div>
           </header>
 
-          {/* EDIT USERNAME MODAL (Mandatory Underscore/Dot check) */}
           {isEditingUsername && (
             <div style={{ position: 'fixed', inset: 0, zIndex: 1200, backgroundColor: 'rgba(2, 6, 23, 0.88)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
               <div style={{ width: '100%', maxWidth: '380px', backgroundColor: '#0f172a', border: '1px solid #f59e0b', borderRadius: '16px', padding: '24px', textAlign: 'left' }}>
@@ -1131,7 +1080,6 @@ export default function App() {
             </div>
           )}
 
-          {/* Navigation Tabs */}
           {!isExamActive && (
             <div style={{ display: 'flex', gap: '10px', margin: '20px 0 10px 0', flexWrap: 'wrap' }}>
               <button
@@ -1169,24 +1117,19 @@ export default function App() {
             </div>
           )}
 
-          {/* CBT EXAM ENGINE */}
           {isExamActive ? (
             <div style={{ marginTop: '24px', backgroundColor: 'rgba(15, 23, 42, 0.95)', border: '2px solid #f59e0b', borderRadius: '18px', padding: '28px', boxShadow: '0 0 50px rgba(245, 158, 11, 0.25)', textAlign: 'left', position: 'relative' }}>
-              
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '16px', marginBottom: '20px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Lock size={18} color="#f59e0b" />
+                  <Lock color="#f59e0b" size={18} />
                   <span style={{ fontSize: '13px', fontWeight: 700, color: '#f59e0b', letterSpacing: '0.5px' }}>
                     EXAM FOCUS LOCK ENGAGED • {examSubject.toUpperCase()} ASSESSMENT
-                  </span>
-                  <span style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '4px', backgroundColor: 'rgba(239, 68, 68, 0.15)', color: '#f87171' }}>
-                    SCREEN LOCKED
                   </span>
                 </div>
 
                 {!examCompleted && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 14px', borderRadius: '8px', backgroundColor: timeLeft < 60 ? 'rgba(239, 68, 68, 0.2)' : 'rgba(56, 189, 248, 0.15)', border: timeLeft < 60 ? '1px solid #ef4444' : '1px solid #38bdf8' }}>
-                    <Clock size={16} color={timeLeft < 60 ? '#ef4444' : '#38bdf8'} />
+                    <Clock color={timeLeft < 60 ? '#ef4444' : '#38bdf8'} size={16} />
                     <span style={{ fontFamily: 'monospace', fontSize: '14px', fontWeight: 700, color: timeLeft < 60 ? '#ef4444' : '#38bdf8' }}>
                       TIME LEFT: {formatTimer(timeLeft)}
                     </span>
@@ -1269,10 +1212,9 @@ export default function App() {
                   })()}
                 </div>
               ) : (
-                /* EXAM RESULTS */
                 examResult && (
                   <div style={{ textAlign: 'center', padding: '20px 10px' }}>
-                    <Award size={52} color="#f59e0b" style={{ margin: '0 auto 14px auto' }} />
+                    <Award color="#f59e0b" size={52} style={{ margin: '0 auto 14px auto' }} />
                     <h2 style={{ fontSize: '28px', fontWeight: 800, margin: '0 0 6px 0', color: '#f8fafc' }}>
                       Assessment Completed!
                     </h2>
@@ -1312,12 +1254,8 @@ export default function App() {
               )}
             </div>
           ) : (
-            /* DASHBOARD TABS: PROFILE VIEW vs FRIENDS HUB vs STUDY HUB */
             <div>
               {activeTab === 'profile' ? (
-                /* ========================================================
-                    MY PROFILE & PROGRESS PRIVACY TAB
-                   ======================================================== */
                 <div style={{ marginTop: '24px', textAlign: 'left', maxWidth: '720px', margin: '24px auto', backgroundColor: 'rgba(15, 23, 42, 0.8)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '18px', padding: '32px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '24px', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '20px' }}>
                     <div style={{ position: 'relative' }}>
@@ -1325,498 +1263,91 @@ export default function App() {
                         {profilePicUrl ? (
                           <img src={profilePicUrl} alt="Profile Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         ) : (
-                          <User size={38} color="#f59e0b" />
+                          <User color="#f59e0b" size={38} />
                         )}
                       </div>
                       <button
                         onClick={() => profilePicInputRef.current?.click()}
                         style={{ position: 'absolute', bottom: 0, right: 0, backgroundColor: '#f59e0b', color: '#030712', border: 'none', borderRadius: '50%', width: '28px', height: '28px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                        title="Upload Profile Picture"
                       >
                         <Edit3 size={14} />
                       </button>
-                      <input type="file" ref={profilePicInputRef} onChange={profilePicPicChange => handleProfilePicChange(profilePicPicChange as any)} accept="image/*" style={{ display: 'none' }} />
+                      <input type="file" ref={profilePicInputRef} onChange={handleProfilePicChange} accept="image/*" style={{ display: 'none' }} />
                     </div>
 
                     <div>
                       <h2 style={{ margin: '0 0 4px 0', fontSize: '22px', fontWeight: 800, color: '#f8fafc' }}>{name || 'Scholar'}</h2>
                       <div style={{ fontFamily: 'monospace', fontSize: '14px', color: '#f59e0b' }}>{myUsername}</div>
-                      <div style={{ fontSize: '11px', color: '#10b981', marginTop: '4px' }}>● Verified Student Account</div>
                     </div>
                   </div>
-
-                  {/* Progress Report Privacy Toggle */}
-                  <div style={{ padding: '20px', borderRadius: '12px', backgroundColor: 'rgba(0,0,0,0.4)', border: '1px solid rgba(56, 189, 248, 0.2)', marginBottom: '24px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
-                      <div>
-                        <h4 style={{ margin: '0 0 4px 0', fontSize: '15px', color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <Shield size={16} color="#38bdf8" /> Progress Report Privacy Setting
-                        </h4>
-                        <p style={{ margin: 0, fontSize: '12px', color: '#94a3b8' }}>
-                          Choose whether your friends and study circle can view your test scores and progress percentage.
-                        </p>
-                      </div>
-
-                      <button
-                        onClick={() => setShowProgressPublicly(!showProgressPublicly)}
+                </div>
+              ) : selectedSubject === "Friends_Hub" ? (
+                <div style={{ marginTop: '24px', textAlign: 'left', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '24px' }}>
+                  <div style={{ padding: '24px', borderRadius: '16px', backgroundColor: 'rgba(15, 23, 42, 0.75)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                    <h3 style={{ margin: '0 0 16px 0', fontSize: '18px', fontWeight: 700, color: '#f8fafc' }}>Add Friend by User ID</h3>
+                    <form onSubmit={handleSearchAndSendRequest} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      <input
+                        type="text"
+                        value={searchIdInput}
+                        onChange={(e) => setSearchIdInput(e.target.value)}
+                        placeholder="Enter user ID (e.g. @priya.maths)"
+                        style={{ width: '100%', padding: '11px 12px', borderRadius: '8px', border: '1px solid #334155', backgroundColor: '#030712', color: '#fff', fontSize: '13px', outline: 'none', boxSizing: 'border-box' }}
+                      />
+                      <button type="submit" style={{ padding: '11px', borderRadius: '8px', border: 'none', backgroundColor: '#f59e0b', color: '#030712', fontSize: '13px', fontWeight: 800, cursor: 'pointer' }}>
+                        Send Friend Request
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              ) : !selectedSubject ? (
+                <div style={{ margin: '40px 0', textAlign: 'center' }}>
+                  <h1 style={{ fontSize: '36px', fontWeight: 800, margin: '0 0 12px 0' }}>
+                    What would you like to study today?
+                  </h1>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px', textAlign: 'left' }}>
+                    {subjectsList.map((subj, idx) => (
+                      <div
+                        key={idx}
+                        onClick={() => setSelectedSubject(subj.name)}
+                        className="subject-card"
                         style={{
-                          padding: '8px 16px', borderRadius: '8px', border: 'none',
-                          backgroundColor: showProgressPublicly ? '#10b981' : '#334155',
-                          color: '#fff', fontSize: '12px', fontWeight: 700, cursor: 'pointer',
-                          display: 'flex', alignItems: 'center', gap: '6px'
+                          padding: '24px', borderRadius: '16px', backgroundColor: 'rgba(15, 23, 42, 0.7)',
+                          border: '1px solid rgba(255, 255, 255, 0.08)', cursor: 'pointer',
+                          display: 'flex', flexDirection: 'column', justifyContent: 'space-between'
                         }}
                       >
-                        <EyeIcon size={14} /> {showProgressPublicly ? 'Public (Visible to Friends)' : 'Private (Hidden)'}
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* My Progress Report */}
-                  <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#f8fafc', marginBottom: '12px' }}>
-                    My Assessment Progress Report ({scoreHistory.length} tests)
-                  </h3>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    {scoreHistory.map(rec => (
-                      <div key={rec.id} style={{ padding: '12px 16px', borderRadius: '8px', backgroundColor: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div>
-                          <div style={{ fontSize: '14px', fontWeight: 700, color: '#f8fafc' }}>{rec.subject}</div>
-                          <div style={{ fontSize: '11px', color: '#94a3b8' }}>{rec.date}</div>
-                        </div>
-                        <div style={{ textAlign: 'right' }}>
-                          <div style={{ fontSize: '15px', fontWeight: 800, color: '#f59e0b' }}>{rec.score} / {rec.maxMarks}</div>
-                          <div style={{ fontSize: '11px', color: '#38bdf8' }}>{rec.percentage}%</div>
+                          <h3 style={{ margin: '0 0 6px 0', fontSize: '19px', fontWeight: 700, color: '#f8fafc' }}>{subj.name}</h3>
+                          <p style={{ margin: 0, fontSize: '13px', color: '#94a3b8' }}>{subj.desc}</p>
                         </div>
                       </div>
                     ))}
                   </div>
                 </div>
-              ) : selectedSubject === "Friends_Hub" ? (
-                /* FRIENDS NETWORK HUB */
-                <div style={{ marginTop: '24px', textAlign: 'left', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '24px' }}>
-                  
-                  <div style={{ padding: '24px', borderRadius: '16px', backgroundColor: 'rgba(15, 23, 42, 0.75)', border: '1px solid rgba(255,255,255,0.08)' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                      <UserPlus size={20} color="#f59e0b" />
-                      <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: '#f8fafc' }}>Add Friend by User ID</h3>
-                    </div>
-                    <p style={{ fontSize: '13px', color: '#94a3b8', margin: '0 0 16px 0', lineHeight: 1.5 }}>
-                      Search your friend's unique Nexus username (requires underscore <code style={{ color: '#38bdf8' }}>_</code> or dot <code style={{ color: '#38bdf8' }}>.</code>) to connect.
-                    </p>
-
-                    <form onSubmit={handleSearchAndSendRequest} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                      <div style={{ position: 'relative' }}>
-                        <Search size={15} color="#94a3b8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
-                        <input
-                          type="text"
-                          value={searchIdInput}
-                          onChange={(e) => setSearchIdInput(e.target.value)}
-                          placeholder="Enter user ID (e.g. @priya.maths)"
-                          style={{ width: '100%', padding: '11px 12px 11px 36px', borderRadius: '8px', border: '1px solid #334155', backgroundColor: '#030712', color: '#fff', fontSize: '13px', outline: 'none', boxSizing: 'border-box', fontFamily: 'monospace' }}
-                        />
-                      </div>
-
-                      <button
-                        type="submit"
-                        style={{ padding: '11px', borderRadius: '8px', border: 'none', backgroundColor: '#f59e0b', color: '#030712', fontSize: '13px', fontWeight: 800, cursor: 'pointer', boxShadow: '0 4px 15px rgba(245, 158, 11, 0.3)' }}
-                      >
-                        Send Friend Request
-                      </button>
-                    </form>
-
-                    {searchMessage && (
-                      <div style={{ marginTop: '12px', padding: '10px', borderRadius: '6px', backgroundColor: searchMessage.type === 'success' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)', border: searchMessage.type === 'success' ? '1px solid #10b981' : '1px solid #ef4444', color: searchMessage.type === 'success' ? '#10b981' : '#f87171', fontSize: '12px' }}>
-                        {searchMessage.text}
-                      </div>
-                    )}
-
-                    <div style={{ marginTop: '24px', padding: '14px', borderRadius: '10px', backgroundColor: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <div>
-                        <div style={{ fontSize: '11px', color: '#94a3b8', textTransform: 'uppercase', marginBottom: '2px' }}>Your User ID</div>
-                        <div style={{ fontFamily: 'monospace', fontSize: '15px', fontWeight: 700, color: '#f59e0b' }}>{myUsername}</div>
-                      </div>
-                      <button onClick={() => { setNewUsernameInput(myUsername.replace('@', '')); setIsEditingUsername(true); }} style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid #334155', background: 'transparent', color: '#38bdf8', fontSize: '11px', cursor: 'pointer' }}>
-                        Edit ID
-                      </button>
-                    </div>
-                  </div>
-
-                  <div style={{ padding: '24px', borderRadius: '16px', backgroundColor: 'rgba(15, 23, 42, 0.75)', border: '1px solid rgba(255,255,255,0.08)' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-                      <Users size={20} color="#38bdf8" />
-                      <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: '#f8fafc' }}>Your Friends & Study Circle</h3>
-                    </div>
-
-                    {friendsList.length === 0 ? (
-                      <div style={{ padding: '30px 0', textAlign: 'center', color: '#94a3b8', fontSize: '13px' }}>
-                        No friends added yet. Search a User ID on the left!
-                      </div>
-                    ) : (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxHeight: '360px', overflowY: 'auto' }}>
-                        {friendsList.map((f) => (
-                          <div
-                            key={f.id}
-                            style={{ padding: '12px 16px', borderRadius: '10px', backgroundColor: 'rgba(0,0,0,0.35)', border: '1px solid rgba(255,255,255,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}
-                          >
-                            <div>
-                              <div style={{ fontSize: '14px', fontWeight: 700, color: '#f8fafc' }}>{f.name}</div>
-                              <div style={{ fontSize: '12px', fontFamily: 'monospace', color: '#38bdf8' }}>{f.username}</div>
-                              {f.status === 'connected' && f.showProgress && (
-                                <div style={{ fontSize: '11px', color: '#10b981', marginTop: '2px' }}>Latest Score: 83.3% (Public)</div>
-                              )}
-                            </div>
-
-                            <div style={{ display: 'flex', gap: '6px' }}>
-                              {f.status === 'connected' ? (
-                                <>
-                                  <button
-                                    onClick={() => setActiveChatFriend(f)}
-                                    style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '6px 10px', borderRadius: '6px', border: '1px solid #334155', backgroundColor: 'rgba(56, 189, 248, 0.1)', color: '#38bdf8', fontSize: '11px', fontWeight: 700, cursor: 'pointer' }}
-                                  >
-                                    <MessageSquare size={12} /> Chat
-                                  </button>
-                                  <button
-                                    onClick={() => { setActiveChatFriend(f); setIsVideoCallActive(true); }}
-                                    style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '6px 10px', borderRadius: '6px', border: 'none', backgroundColor: '#10b981', color: '#020617', fontSize: '11px', fontWeight: 700, cursor: 'pointer' }}
-                                  >
-                                    <Video size={12} /> Video
-                                  </button>
-                              </>
-                              ) : (
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                  <span style={{ fontSize: '11px', color: '#f59e0b', fontStyle: 'italic' }}>Pending Request</span>
-                                  <button
-                                    onClick={() => handleAcceptRequest(f.id)}
-                                    style={{ padding: '5px 10px', borderRadius: '6px', border: 'none', backgroundColor: '#10b981', color: '#020617', fontSize: '11px', fontWeight: 800, cursor: 'pointer' }}
-                                  >
-                                    Accept
-                                  </button>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* DIRECT MESSAGING CHAT MODAL */}
-                  {activeChatFriend && !isVideoCallActive && (
-                    <div style={{ position: 'fixed', inset: 0, zIndex: 1100, backgroundColor: 'rgba(2, 6, 23, 0.88)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-                      <div style={{ width: '100%', maxWidth: '440px', height: '520px', backgroundColor: '#0f172a', border: '1px solid #f59e0b', borderRadius: '16px', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-                        
-                        <div style={{ padding: '14px 16px', backgroundColor: 'rgba(0,0,0,0.4)', borderBottom: '1px solid rgba(255,255,255,0.08)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#f59e0b', color: '#030712', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                              {activeChatFriend.name[0]}
-                            </div>
-                            <div>
-                              <div style={{ fontSize: '14px', fontWeight: 700, color: '#f8fafc' }}>{activeChatFriend.name}</div>
-                              <div style={{ fontSize: '11px', fontFamily: 'monospace', color: '#38bdf8' }}>{activeChatFriend.username}</div>
-                            </div>
-                          </div>
-                          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                            <button onClick={() => setIsVideoCallActive(true)} style={{ background: 'none', border: 'none', color: '#10b981', cursor: 'pointer', padding: '4px' }} title="Video Call">
-                              <Video size={18} />
-                            </button>
-                            <button onClick={() => setActiveChatFriend(null)} style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer' }}>
-                              <X size={18} />
-                            </button>
-                          </div>
-                      </div>
-
-                      <div style={{ flex: 1, padding: '16px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                        <div style={{ textAlign: 'center', fontSize: '11px', color: '#64748b', margin: '6px 0' }}>
-                          Encrypted chat with {activeChatFriend.name}
-                        </div>
-
-                        {(chatMessages[activeChatFriend.username] || []).map((m, idx) => {
-                          const isMe = m.sender === 'me';
-                          return (
-                            <div key={idx} style={{ alignSelf: isMe ? 'flex-end' : 'flex-start', maxWidth: '80%', padding: '10px 14px', borderRadius: isMe ? '12px 12px 2px 12px' : '12px 12px 12px 2px', backgroundColor: isMe ? '#f59e0b' : '#1e293b', color: isMe ? '#030712' : '#f8fafc', fontSize: '13px' }}>
-                              <div>{m.text}</div>
-                              <div style={{ fontSize: '9px', textAlign: 'right', marginTop: '4px', opacity: 0.7 }}>{m.time}</div>
-                            </div>
-                          );
-                        })}
-                        <div ref={chatEndRef} />
-                      </div>
-
-                      <div style={{ padding: '12px', borderTop: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(0,0,0,0.3)', display: 'flex', gap: '8px' }}>
-                        <input
-                          type="text"
-                          value={chatInputText}
-                          onChange={(e) => setChatInputText(e.target.value)}
-                          onKeyDown={(e) => { if (e.key === 'Enter') handleSendChatMessage(); }}
-                          placeholder="Type a message..."
-                          style={{ flex: 1, padding: '9px 12px', borderRadius: '8px', border: '1px solid #334155', backgroundColor: '#020617', color: '#fff', fontSize: '12px', outline: 'none' }}
-                        />
-                        <button onClick={handleSendChatMessage} style={{ padding: '9px 14px', borderRadius: '8px', border: 'none', backgroundColor: '#f59e0b', color: '#030712', cursor: 'pointer' }}>
-                          <Send size={15} />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* SIMULATED VIDEO CALL OVERLAY */}
-                {isVideoCallActive && activeChatFriend && (
-                  <div style={{ position: 'fixed', inset: 0, zIndex: 1200, backgroundColor: '#020617', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', padding: '30px' }}>
-                    <div style={{ width: '100%', maxWidth: '900px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 20px', borderRadius: '12px', backgroundColor: 'rgba(15, 23, 42, 0.8)', border: '1px solid rgba(255,255,255,0.08)' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#10b981' }} />
-                        <span style={{ fontSize: '14px', fontWeight: 700, color: '#f8fafc' }}>Video Session with {activeChatFriend.name}</span>
-                      </div>
-                      <div style={{ fontFamily: 'monospace', fontSize: '13px', color: '#38bdf8' }}>02:45</div>
-                    </div>
-
-                    <div style={{ width: '100%', maxWidth: '900px', flex: 1, margin: '20px 0', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', gap: '16px' }}>
-                      <div style={{ borderRadius: '16px', backgroundColor: '#0f172a', border: '1px solid #334155', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden', minHeight: '300px' }}>
-                        <div style={{ width: '80px', height: '80px', borderRadius: '50%', backgroundColor: '#38bdf8', color: '#020617', fontSize: '32px', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px' }}>
-                          {activeChatFriend.name[0]}
-                        </div>
-                        <div style={{ fontSize: '16px', fontWeight: 700, color: '#f8fafc' }}>{activeChatFriend.name}</div>
-                        <div style={{ fontSize: '12px', color: '#10b981', marginTop: '4px' }}>Connected</div>
-                      </div>
-
-                      <div style={{ borderRadius: '16px', backgroundColor: '#0f172a', border: '1px solid #334155', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden', minHeight: '300px' }}>
-                        {profilePicUrl ? (
-                          <img src={profilePicUrl} alt="My video feed" style={{ width: '80px', height: '80px', borderRadius: '50%', objectFit: 'cover', marginBottom: '12px' }} />
-                        ) : (
-                          <div style={{ width: '80px', height: '80px', borderRadius: '50%', backgroundColor: '#f59e0b', color: '#030712', fontSize: '32px', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px' }}>
-                            {name ? name[0] : 'S'}
-                          </div>
-                        )}
-                        <div style={{ fontSize: '16px', fontWeight: 700, color: '#f8fafc' }}>You ({myUsername})</div>
-                      </div>
-                    </div>
-
-                    <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-                      <button onClick={() => setIsAudioMuted(!isAudioMuted)} style={{ width: '50px', height: '50px', borderRadius: '50%', border: 'none', backgroundColor: isAudioMuted ? '#ef4444' : '#334155', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        {isAudioMuted ? <MicOff size={20} /> : <Mic size={20} />}
-                      </button>
-                      <button onClick={() => setIsVideoMuted(!isVideoMuted)} style={{ width: '50px', height: '50px', borderRadius: '50%', border: 'none', backgroundColor: isVideoMuted ? '#ef4444' : '#334155', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <Video size={20} />
-                      </button>
-                      <button onClick={() => setIsVideoCallActive(false)} style={{ padding: '12px 28px', borderRadius: '30px', border: 'none', backgroundColor: '#ef4444', color: '#fff', fontSize: '14px', fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <PhoneOff size={18} /> End Call
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-              </div>
-            ) : !selectedSubject ? (
-              /* SUBJECT SELECTION GATEWAY */
-              <div style={{ margin: '40px 0', textAlign: 'center' }}>
-                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#f59e0b', fontSize: '13px', fontWeight: 600, marginBottom: '10px' }}>
-                  <Sparkles size={16} /> Welcome, {name || 'Scholar'}! ({myUsername})
-                </div>
-                <h1 style={{ fontSize: '36px', fontWeight: 800, margin: '0 0 12px 0', letterSpacing: '-0.5px' }}>
-                  What would you like to study today?
-                </h1>
-                <p style={{ color: '#94a3b8', fontSize: '15px', maxWidth: '640px', margin: '0 auto 36px auto', lineHeight: 1.6 }}>
-                  Select your desired discipline to explore comprehensive chapter study materials or challenge yourself with a timed 30-Marks assessment.
-                </p>
-
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px', textAlign: 'left' }}>
-                  {subjectsList.map((subj, idx) => (
-                    <div
-                      key={idx}
-                      onClick={() => setSelectedSubject(subj.name)}
-                      className="subject-card"
-                      style={{
-                        padding: '24px', borderRadius: '16px', backgroundColor: 'rgba(15, 23, 42, 0.7)',
-                        border: '1px solid rgba(255, 255, 255, 0.08)', backdropFilter: 'blur(12px)', cursor: 'pointer',
-                        display: 'flex', flexDirection: 'column', justifyContent: 'space-between', transition: 'all 0.25s ease'
-                      }}
-                    >
-                      <div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-                          <div style={{ width: '42px', height: '42px', borderRadius: '10px', backgroundColor: `${subj.color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <subj.icon size={22} color={subj.color} />
-                          </div>
-                          <ChevronRight size={18} color="#94a3b8" />
-                        </div>
-                        <h3 style={{ margin: '0 0 6px 0', fontSize: '19px', fontWeight: 700, color: '#f8fafc' }}>{subj.name}</h3>
-                        <p style={{ margin: 0, fontSize: '13px', color: '#94a3b8', lineHeight: 1.5 }}>{subj.desc}</p>
-                      </div>
-
-                      <div style={{ marginTop: '20px', paddingTop: '14px', borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: 600, color: subj.color }}>
-                        <span>Explore Curriculum ➔</span>
-                        <span>Tests Available: Yes</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div style={{ marginTop: '36px', textAlign: 'center' }}>
-                  <button
-                    onClick={() => { setSelectedSubject("Physics"); setActiveTab('scores'); }}
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '10px 20px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', backgroundColor: 'rgba(15, 23, 42, 0.6)', color: '#38bdf8', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}
-                  >
-                    <BarChart3 size={16} /> View Examination Score Ledger
+              ) : (
+                <div style={{ marginTop: '24px' }}>
+                  <button onClick={() => setSelectedSubject(null)} style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid #334155', backgroundColor: 'transparent', color: '#cbd5e1', fontSize: '12px', cursor: 'pointer', marginBottom: '16px' }}>
+                    <ArrowLeft size={14} /> Back to Disciplines
                   </button>
-                </div>
-              </div>
-            ) : (
-              /* SUBJECT SELECTED VIEW */
-              <div style={{ marginTop: '24px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '14px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <button
-                      onClick={() => setSelectedSubject(null)}
-                      style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '6px', border: '1px solid #334155', backgroundColor: 'transparent', color: '#cbd5e1', fontSize: '12px', cursor: 'pointer' }}
-                    >
-                      <ArrowLeft size={14} /> Back to Disciplines
-                    </button>
-                    <h2 style={{ fontSize: '24px', fontWeight: 800, margin: 0, color: '#f8fafc' }}>
-                      {selectedSubject} Syllabus & Examination
-                    </h2>
-                  </div>
 
-                  <button
-                    onClick={() => startExamForSubject(selectedSubject)}
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '10px 22px', borderRadius: '8px', border: 'none', backgroundColor: '#f59e0b', color: '#030712', fontSize: '13px', fontWeight: 800, cursor: 'pointer', boxShadow: '0 4px 20px rgba(245, 158, 11, 0.35)' }}
-                  >
-                    <Play size={15} fill="#030712" /> START TEST (30 MARKS)
-                  </button>
-                </div>
-
-                <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '10px' }}>
-                  <button
-                    onClick={() => setActiveTab('study')}
-                    style={{ padding: '8px 16px', borderRadius: '6px', border: 'none', backgroundColor: activeTab === 'study' ? '#f59e0b' : 'rgba(255,255,255,0.06)', color: activeTab === 'study' ? '#030712' : '#cbd5e1', fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}
-                  >
-                    Curated Chapters & Formulas
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('scores')}
-                    style={{ padding: '8px 16px', borderRadius: '6px', border: 'none', backgroundColor: activeTab === 'scores' ? '#38bdf8' : 'rgba(255,255,255,0.06)', color: activeTab === 'scores' ? '#030712' : '#cbd5e1', fontSize: '12px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
-                  >
-                    <BarChart3 size={13} /> Assessment Score Ledger ({scoreHistory.length})
-                  </button>
-                </div>
-
-                {activeTab === 'study' && (
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '18px', textAlign: 'left' }}>
                     {(SUBJECT_TOPICS[selectedSubject] || SUBJECT_TOPICS["Physics"]).map((topic, tIdx) => (
                       <div
                         key={tIdx}
                         onClick={() => setReadingTopic(topic)}
                         className="subject-card"
-                        style={{ padding: '22px', borderRadius: '14px', backgroundColor: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(255, 255, 255, 0.08)', backdropFilter: 'blur(10px)', cursor: 'pointer', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
+                        style={{ padding: '22px', borderRadius: '14px', backgroundColor: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(255, 255, 255, 0.08)', cursor: 'pointer' }}
                       >
-                        <div>
-                          <span style={{ fontSize: '11px', color: '#f59e0b', fontWeight: 700, textTransform: 'uppercase' }}>Chapter Unit {tIdx + 1}</span>
-                          <h3 style={{ margin: '6px 0 8px 0', fontSize: '17px', fontWeight: 700, color: '#f8fafc' }}>{topic.title}</h3>
-                          <p style={{ fontSize: '13px', color: '#94a3b8', lineHeight: 1.5, margin: '0 0 14px 0' }}>{topic.desc}</p>
-                          <div style={{ padding: '6px 10px', backgroundColor: 'rgba(0,0,0,0.35)', borderRadius: '6px', fontSize: '11px', fontFamily: 'monospace', color: '#38bdf8', marginBottom: '14px' }}>
-                            Formula: {topic.formula}
-                          </div>
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <div style={{ fontSize: '12px', fontWeight: 600, color: '#f59e0b', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                            Inspect Notes & Tips <ChevronRight size={14} />
-                          </div>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setShareNoteModal({ isOpen: true, topicTitle: topic.title, friendName: 'Study Group' });
-                            }}
-                            style={{ padding: '4px 8px', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.1)', background: 'transparent', color: '#38bdf8', fontSize: '11px', cursor: 'pointer' }}
-                          >
-                            Share Note
-                          </button>
-                        </div>
+                        <h3 style={{ margin: '6px 0 8px 0', fontSize: '17px', fontWeight: 700, color: '#f8fafc' }}>{topic.title}</h3>
+                        <p style={{ fontSize: '13px', color: '#94a3b8', margin: '0 0 14px 0' }}>{topic.desc}</p>
                       </div>
                     ))}
                   </div>
-                )}
-
-                {activeTab === 'scores' && (
-                  <div style={{ backgroundColor: 'rgba(15, 23, 42, 0.75)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '20px', textAlign: 'left' }}>
-                    <h3 style={{ margin: '0 0 16px 0', fontSize: '18px', fontWeight: 700, color: '#f8fafc' }}>
-                      Performance & Mastery Ledger
-                    </h3>
-
-                    {scoreHistory.length === 0 ? (
-                      <p style={{ color: '#94a3b8', fontSize: '13px' }}>No assessments submitted yet. Click "START TEST" above to record your first exam score!</p>
-                    ) : (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                        {scoreHistory.map((rec) => (
-                          <div
-                            key={rec.id}
-                            style={{ padding: '14px 18px', borderRadius: '10px', backgroundColor: 'rgba(0,0,0,0.35)', border: '1px solid rgba(255,255,255,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}
-                          >
-                            <div>
-                              <div style={{ fontSize: '15px', fontWeight: 700, color: '#f8fafc' }}>{rec.subject} Assessment</div>
-                              <div style={{ fontSize: '11px', color: '#94a3b8', marginTop: '2px' }}>Recorded: {rec.date} • ID: {rec.id}</div>
-                            </div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                              <div style={{ textAlign: 'right' }}>
-                                <div style={{ fontSize: '18px', fontWeight: 800, color: '#f59e0b' }}>
-                                  {rec.score} / {rec.maxMarks}
-                                </div>
-                                <div style={{ fontSize: '11px', color: '#38bdf8' }}>{rec.percentage}% Score</div>
-                              </div>
-                              <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: rec.percentage >= 60 ? '#10b981' : '#ef4444' }} />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* READ TOPIC POPUP */}
-            {readingTopic && (
-              <div style={{ position: 'fixed', inset: 0, zIndex: 999, backgroundColor: 'rgba(2, 6, 23, 0.9)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-                <div style={{ width: '100%', maxWidth: '600px', backgroundColor: '#0f172a', border: '1px solid #f59e0b', borderRadius: '16px', padding: '26px', position: 'relative', textAlign: 'left' }}>
-                  <button
-                    onClick={() => setReadingTopic(null)}
-                    style={{ position: 'absolute', right: '16px', top: '16px', background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer' }}
-                  >
-                    <X size={20} />
-                  </button>
-                  <span style={{ fontSize: '11px', color: '#f59e0b', fontWeight: 700, textTransform: 'uppercase' }}>STUDY CHAPTER NOTES</span>
-                  <h2 style={{ margin: '4px 0 12px 0', fontSize: '22px', fontWeight: 800, color: '#f8fafc' }}>{readingTopic.title}</h2>
-                  <p style={{ fontSize: '14px', color: '#cbd5e1', lineHeight: 1.6, marginBottom: '16px' }}>{readingTopic.desc}</p>
-                  
-                  <div style={{ padding: '12px', backgroundColor: 'rgba(0,0,0,0.4)', borderRadius: '8px', border: '1px solid rgba(56, 189, 248, 0.2)', marginBottom: '16px' }}>
-                    <div style={{ fontSize: '11px', color: '#94a3b8', marginBottom: '4px' }}>GOVERNING FORMULA / PRINCIPLE:</div>
-                    <div style={{ fontSize: '14px', fontFamily: 'monospace', color: '#38bdf8', fontWeight: 700 }}>{readingTopic.formula}</div>
-                  </div>
-
-                  <div style={{ padding: '12px', backgroundColor: 'rgba(16, 185, 129, 0.08)', borderRadius: '8px', border: '1px solid rgba(16, 185, 129, 0.2)', marginBottom: '20px' }}>
-                    <div style={{ fontSize: '11px', color: '#10b981', fontWeight: 700, marginBottom: '2px' }}>EXAMINATION STRATEGY TIP:</div>
-                    <div style={{ fontSize: '13px', color: '#cbd5e1' }}>{readingTopic.tips}</div>
-                  </div>
-
-                  <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
-                    <button
-                      onClick={() => {
-                        setShareNoteModal({ isOpen: true, topicTitle: readingTopic.title, friendName: 'Study Circle' });
-                      }}
-                      style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid #334155', backgroundColor: 'transparent', color: '#38bdf8', fontSize: '12px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
-                    >
-                      <Share size={13} /> Share with Friend
-                    </button>
-                    <button
-                      onClick={() => setReadingTopic(null)}
-                      style={{ padding: '8px 20px', borderRadius: '8px', border: 'none', backgroundColor: '#f59e0b', color: '#030712', fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}
-                    >
-                      Close Chapter
-                    </button>
-                  </div>
                 </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
           )}
 
-          {/* FRIEND AI */}
           {!isExamActive && (
             <>
               <button
@@ -1824,17 +1355,10 @@ export default function App() {
                 style={{
                   position: 'fixed', bottom: '24px', right: '24px', zIndex: 900,
                   display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 20px', borderRadius: '30px',
-                  backgroundColor: '#f59e0b', color: '#030712', border: 'none', boxShadow: '0 8px 30px rgba(245, 158, 11, 0.4)',
-                  fontWeight: 800, fontSize: '13px', cursor: 'pointer', transition: 'transform 0.2s'
+                  backgroundColor: '#f59e0b', color: '#030712', border: 'none', fontWeight: 800, fontSize: '13px', cursor: 'pointer'
                 }}
               >
-                <Bot size={18} />
-                <span>Friend AI</span>
-                {!isPremiumUser && (
-                  <span style={{ fontSize: '10px', backgroundColor: 'rgba(0,0,0,0.2)', padding: '2px 6px', borderRadius: '10px' }}>
-                    {10 - uploadedPhotosToday} photos left
-                  </span>
-                )}
+                <Bot size={18} /> Friend AI
               </button>
 
               {isAiOpen && (
@@ -1843,34 +1367,11 @@ export default function App() {
                   backgroundColor: '#0f172a', border: '1px solid rgba(245, 158, 11, 0.35)', borderRadius: '16px',
                   boxShadow: '0 20px 50px rgba(0,0,0,0.85)', display: 'flex', flexDirection: 'column', overflow: 'hidden', textAlign: 'left'
                 }}>
-                  <div style={{ padding: '14px 16px', borderBottom: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(0,0,0,0.3)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <div style={{ width: '28px', height: '28px', borderRadius: '50%', backgroundColor: '#f59e0b', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <Bot size={16} color="#030712" />
-                      </div>
-                      <div>
-                        <div style={{ fontSize: '13px', fontWeight: 700, color: '#f8fafc' }}>Friend AI Tutor</div>
-                        <div style={{ fontSize: '10px', color: '#10b981' }}>Online • Ready to solve doubts</div>
-                      </div>
-                    </div>
+                  <div style={{ padding: '14px 16px', backgroundColor: 'rgba(0,0,0,0.3)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ fontSize: '13px', fontWeight: 700, color: '#f8fafc' }}>Friend AI Tutor</div>
                     <button onClick={() => setIsAiOpen(false)} style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer' }}>
                       <X size={16} />
                     </button>
-                  </div>
-
-                  <div style={{ padding: '8px 14px', backgroundColor: isPremiumUser ? 'rgba(16, 185, 129, 0.15)' : 'rgba(245, 158, 11, 0.1)', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px' }}>
-                    {isPremiumUser ? (
-                      <span style={{ color: '#10b981', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                        <Crown size={12} /> Premium Active: Unlimited Photo Doubts
-                      </span>
-                    ) : (
-                      <>
-                        <span style={{ color: '#f59e0b' }}>Daily Uploads: {uploadedPhotosToday}/10 used</span>
-                        <button onClick={() => { setPaymentStep('checkout'); setShowPaymentModal(true); }} style={{ background: 'none', border: 'none', color: '#38bdf8', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}>
-                          Unlock Unlimited
-                        </button>
-                      </>
-                      )}
                   </div>
 
                   <div style={{ flex: 1, padding: '16px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px', minHeight: '260px', maxHeight: '330px' }}>
@@ -1882,36 +1383,16 @@ export default function App() {
                           maxWidth: '82%', padding: '10px 14px',
                           borderRadius: msg.sender === 'user' ? '14px 14px 2px 14px' : '14px 14px 14px 2px',
                           backgroundColor: msg.sender === 'user' ? '#f59e0b' : 'rgba(30, 41, 59, 0.8)',
-                          color: msg.sender === 'user' ? '#030712' : '#f8fafc', fontSize: '12.5px', lineHeight: 1.5
+                          color: msg.sender === 'user' ? '#030712' : '#f8fafc', fontSize: '12.5px'
                         }}
                       >
-                        {msg.image && (
-                          <img src={msg.image} alt="Uploaded doubt" style={{ width: '100%', borderRadius: '8px', marginBottom: '6px', maxHeight: '140px', objectFit: 'cover' }} />
-                        )}
                         {msg.text}
                       </div>
                     ))}
                     <div ref={aiChatEndRef} />
                   </div>
 
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleImageFileChange}
-                    accept="image/*"
-                    style={{ display: 'none' }}
-                  />
-
                   <div style={{ padding: '12px', borderTop: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <button
-                      type="button"
-                      onClick={handleTriggerImageUpload}
-                      title="Upload Question Photo"
-                      style={{ padding: '8px', borderRadius: '8px', border: '1px solid #334155', backgroundColor: 'rgba(15, 23, 42, 0.8)', color: uploadedPhotosToday >= 10 && !isPremiumUser ? '#ef4444' : '#38bdf8', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                    >
-                      <ImageIcon size={16} />
-                    </button>
-
                     <input
                       type="text"
                       value={aiInput}
@@ -1920,96 +1401,20 @@ export default function App() {
                       placeholder="Ask any doubt..."
                       style={{ flex: 1, padding: '8px 12px', borderRadius: '8px', border: '1px solid #334155', backgroundColor: '#020617', color: '#fff', fontSize: '12px', outline: 'none' }}
                     />
-
                     <button
                       type="button"
                       onClick={handleSendAiMessage}
-                      style={{ padding: '8px 12px', borderRadius: '8px', border: 'none', backgroundColor: '#f59e0b', color: '#030712', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      style={{ padding: '8px 12px', borderRadius: '8px', border: 'none', backgroundColor: '#f59e0b', color: '#030712', cursor: 'pointer' }}
                     >
                       <Send size={15} />
                     </button>
                   </div>
                 </div>
               )}
-
-              {/* PAYMENT MODAL (ds3267655@oksbi) */}
-              {showPaymentModal && (
-                <div style={{ position: 'fixed', inset: 0, zIndex: 1100, backgroundColor: 'rgba(2, 6, 23, 0.94)', backdropFilter: 'blur(10px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-                  <div style={{ width: '100%', maxWidth: '460px', backgroundColor: '#0f172a', border: '2px solid #f59e0b', borderRadius: '20px', padding: '28px', position: 'relative', textAlign: 'center', boxShadow: '0 0 60px rgba(245, 158, 11, 0.3)' }}>
-                    <button onClick={() => setShowPaymentModal(false)} style={{ position: 'absolute', right: '16px', top: '16px', background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer' }}>
-                      <X size={20} />
-                    </button>
-
-                    <Crown size={44} color="#f59e0b" style={{ margin: '0 auto 10px auto' }} />
-                    <h2 style={{ margin: '0 0 6px 0', fontSize: '22px', fontWeight: 800, color: '#f8fafc' }}>
-                      Unlock Premium Scholar Pass
-                    </h2>
-                    <p style={{ color: '#94a3b8', fontSize: '13px', lineHeight: 1.5, margin: '0 0 18px 0' }}>
-                      Daily limit of 10 photos reached. Pay ₹49.50 via GPay (<strong style={{ color: '#38bdf8' }}>{RECEIVER_UPI_ID}</strong>) to unlock unlimited photo doubts instantly.
-                    </p>
-
-                    {paymentStep === 'checkout' && (
-                      <div>
-                        <div style={{ padding: '12px', borderRadius: '12px', backgroundColor: 'rgba(0,0,0,0.4)', border: '1px solid rgba(245, 158, 11, 0.2)', marginBottom: '16px' }}>
-                          <div style={{ display: 'inline-block', backgroundColor: 'rgba(239, 68, 68, 0.2)', color: '#f87171', border: '1px solid #ef4444', borderRadius: '4px', padding: '2px 8px', fontSize: '10px', fontWeight: 700, marginBottom: '6px' }}>
-                            FIRST-TIME USER OFFER • 50% OFF
-                          </div>
-                          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'baseline', gap: '8px' }}>
-                            <span style={{ fontSize: '16px', color: '#64748b', textDecoration: 'line-through' }}>₹99</span>
-                            <span style={{ fontSize: '32px', fontWeight: 900, color: '#f59e0b' }}>₹{AMOUNT_PAYABLE}</span>
-                            <span style={{ fontSize: '12px', color: '#94a3b8' }}>/ one-time</span>
-                          </div>
-                        </div>
-
-                        <div style={{ backgroundColor: '#ffffff', padding: '14px', borderRadius: '12px', display: 'inline-block', marginBottom: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.5)' }}>
-                          <img src={qrCodeImageUrl} alt="Scan GPay QR" style={{ width: '160px', height: '160px', display: 'block' }} />
-                        </div>
-
-                        <div style={{ fontSize: '11px', color: '#94a3b8', marginBottom: '14px' }}>
-                          Scan via GPay, PhonePe or Paytm
-                          <div style={{ fontFamily: 'monospace', color: '#38bdf8', marginTop: '2px' }}>GPay ID: {RECEIVER_UPI_ID}</div>
-                        </div>
-
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                          <a
-                            href={upiDeepLink}
-                            style={{
-                              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
-                              padding: '12px', borderRadius: '8px', backgroundColor: '#f59e0b', color: '#030712',
-                              fontSize: '13px', fontWeight: 800, textDecoration: 'none', boxShadow: '0 4px 20px rgba(245, 158, 11, 0.35)'
-                            }}
-                          >
-                            <Smartphone size={16} /> Pay Directly via GPay / UPI App
-                          </a>
-
-                          <button
-                            onClick={() => setPaymentStep('verify')}
-                            style={{ padding: '11px', borderRadius: '8px', border: '1px solid #334155', backgroundColor: 'rgba(255,255,255,0.06)', color: '#cbd5e1', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}
-                          >
-                            I Have Paid • Enter 12-Digit UTR Ref ID
-                          </button>
-                        </div>
-                      </div>
-                    )}
-
-                    {paymentStep === 'verify' && (
-                      <div style={{ textAlign: 'left' }}>
-                        <div style={{ padding: '12px', backgroundColor: 'rgba(0,0,0,0.3)', borderRadius: '10px', marginBottom: '16px', fontSize: '12px', color: '#cbd5e1' }}>
-                          <div>Amount: <strong style={{ color: '#f59e0b' }}>₹{AMOUNT_PAYABLE}</strong></div>
-                          <div>Payee GPay ID: <strong style={{ color: '#38bdf8' }}>{RECEIVER_UPI_ID}</strong> ({RECEIVER_NAME})</div>
-                        </div>
-
-                        <label style={{ display: 'block', fontSize: '11px', fontWeight: 600, color: '#94a3b8', marginBottom: '6px' }}>
-                          ENTER 12-DIGIT UPI TRANSACTION REF / UTR NUMBER:
-                        </label>
-                        <input
-                          type="text"
-                          value={utrInput}
-                          onChange={(e) => setUtrInput(e.target.value.replace(/\D/g, ''))}
-                          maxLength={12}
-                          placeholder="e.g. 425689123456"
-                          style={
-                          style={{
-  width: '100%', padding: '12px', borderRadius: '8px', backgroundColor: '#030712', color: '#fff', boxSizing: 'border-box', outline: 'none'
-}}
-/></div>
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
