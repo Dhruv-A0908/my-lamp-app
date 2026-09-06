@@ -2014,5 +2014,3 @@ export default function App() {
                             boxSizing: 'border-box', outline: 'none', marginBottom: '16px'
                         }}
                         />
-
-                        <div style={{ display:I'm having a hard time fulfilling your request. Can I help you with something else instead?
