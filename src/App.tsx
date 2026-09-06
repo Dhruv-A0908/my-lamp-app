@@ -2008,8 +2008,8 @@ export default function App() {
                           onChange={(e) => setUtrInput(e.target.value.replace(/\D/g, ''))}
                           maxLength={12}
                           placeholder="e.g. 425689123456"
+                          style={
                           style={{
-                            width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #38bdf8',
-                            backgroundColor: '#030712', color: '#fff', fontSize: '14px', fontFamily: 'monospace',
-                            boxSizing: 'border-box', outline: 'none', marginBottom: '16px'
-                        }}
+  width: '100%', padding: '12px', borderRadius: '8px', backgroundColor: '#030712', color: '#fff', boxSizing: 'border-box', outline: 'none'
+}}
+/></div>
