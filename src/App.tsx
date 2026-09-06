@@ -2013,4 +2013,3 @@ export default function App() {
                             backgroundColor: '#030712', color: '#fff', fontSize: '14px', fontFamily: 'monospace',
                             boxSizing: 'border-box', outline: 'none', marginBottom: '16px'
                         }}
-                        />
